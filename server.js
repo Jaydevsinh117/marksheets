@@ -10,7 +10,10 @@ const app = express();
 
 
 // Connection URI for MongoDB Compass (replace 'your-database-name' with your actual database name)
-const dbURI = 'mongodb://localhost:27017/marksheet';
+// const dbURI = 'mongodb://localhost:27017/marksheet';
+
+const dbURI = 'mongodb+srv://noteblog:test123@nodeblog.a6obeom.mongodb.net/marksheet?retryWrites=true&w=majority';
+
 
 // Connect to MongoDB with additional options
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
