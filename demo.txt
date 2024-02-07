@@ -1,0 +1,272 @@
+
+
+
+const { response } = require('express');
+const Marksheet = require('../models/marksheet');
+
+// Show the list of Marksheets
+const index = (req, res, next) => {
+    Marksheet.find()
+        .then(response => {
+            res.json({
+                response
+            });
+        })
+        .catch(error => {
+            res.json({
+                message: 'An error occurred!'
+            });
+        });
+};
+
+// Show single marksheet
+const show = (req, res, next) => {
+    let rollno = req.body.rollno;
+    Marksheet.findOne({ rollno })
+        .then(response => {
+            res.json({
+                response
+            });
+        })
+        .catch(error => {
+            res.json({
+                message: 'An error occurred!'
+            });
+        });
+};
+
+// Add new marksheet
+const store = (req, res, next) => {
+    let marksheet = new Marksheet({
+        rollno: req.body.rollno,
+        name: req.body.name,
+        maths: req.body.maths,
+        science: req.body.science,
+        english: req.body.english
+    });
+    marksheet.save()
+        .then(response => {
+            res.json({
+                message: 'Marksheet Added Successfully!'
+            });
+        })
+        .catch(error => {
+            res.json({
+                message: 'An error occurred!'
+            });
+        });
+};
+
+// Update a marksheet
+const update = (req, res, next) => {
+    let rollno = req.body.rollno;
+
+    let updatedData = {
+        name: req.body.name,
+        maths: req.body.maths,
+        science: req.body.science,
+        english: req.body.english
+    };
+
+    Marksheet.findOneAndUpdate({ rollno }, { $set: updatedData })
+        .then(() => {
+            res.json({
+                message: 'Marksheet updated successfully!'
+            });
+        })
+        .catch(error => {
+            res.json({
+                message: 'An error occurred!'
+            });
+        });
+};
+
+// Delete a marksheet
+const destroy = (req, res, next) => {
+    let rollno = req.body.rollno;
+    Marksheet.findOneAndDelete({ rollno })
+        .then(() => {
+            res.json({
+                message: 'Marksheet deleted successfully!'
+            });
+        })
+        .catch(error => {
+            res.json({
+                message: 'An error occurred!'
+            });
+        });
+};
+
+module.exports = {
+    index, show, store, update, destroy
+};
+
+
+
+
+POST
+Request: POST http://localhost:4000/marksheets
+
+GET
+Request: GET http://localhost:4000/marksheets
+
+PUT
+http://localhost:4000/marksheets/5f4b8fb6161a18275d9733cc
+
+DELETE
+http://localhost:4000/marksheets/5f4b8fb6161a18275d9733cc
+
+
+
+const { response } = require('express');
+const Marksheet = require('../models/marksheet');
+
+// Show the list of Marksheets
+const index = (req, res, next) => {
+    Marksheet.find()
+        .then(response => {
+            res.json({
+                response
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: 'An error occurred!'
+            });
+        });
+};
+
+// Show single marksheet
+const show = (req, res, next) => {
+    let rollno = req.params.rollno; // Change to req.params
+    Marksheet.findOne({ rollno })
+        .then(response => {
+            res.json({
+                response
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: 'An error occurred!'
+            });
+        });
+};
+
+// Add new marksheet
+const store = async (req, res, next) => {
+    try {
+        // Validate required fields
+        const { rollno, name, maths, science, english } = req.body;
+        if (!rollno || !name || !maths || !science || !english) {
+            return res.status(400).json({ message: 'Please provide all required fields.' });
+        }
+
+        // Create and save the marksheet
+        const marksheet = new Marksheet({ rollno, name, maths, science, english });
+        await marksheet.save();
+
+        // Success response
+        res.json({
+            message: 'Marksheet added successfully!'
+        });
+    } catch (error) {
+        console.error('Error adding marksheet:', error);
+        res.status(500).json({
+            message: 'An error occurred while adding the marksheet.'
+        });
+    }
+};
+
+// Update a marksheet
+const update = async (req, res, next) => {
+    try {
+        // Validate required fields
+        const { rollno, name, maths, science, english } = req.body;
+        if (!rollno || (!name && !maths && !science && !english)) {
+            return res.status(400).json({ message: 'Please provide at least one field to update.' });
+        }
+
+        // Prepare updated data
+        const updatedData = { name, maths, science, english };
+
+        // Use async/await for better readability
+        await Marksheet.findOneAndUpdate({ rollno }, { $set: updatedData });
+
+        // Success response
+        res.json({
+            message: 'Marksheet updated successfully!'
+        });
+    } catch (error) {
+        console.error('Error updating marksheet:', error);
+        res.status(500).json({
+            message: 'An error occurred while updating the marksheet.'
+        });
+    }
+};
+
+// Delete a marksheet
+const destroy = async (req, res, next) => {
+    try {
+        // Get rollno from params
+        const rollno = req.params.rollno;
+
+        // Use async/await for better readability
+        await Marksheet.findOneAndDelete({ rollno });
+
+        // Success response
+        res.json({
+            message: 'Marksheet deleted successfully!'
+        });
+    } catch (error) {
+        console.error('Error deleting marksheet:', error);
+        res.status(500).json({
+            message: 'An error occurred while deleting the marksheet.'
+        });
+    }
+};
+
+module.exports = {
+    index, show, store, update, destroy
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------
+
+
+
+ 
+ // Add async to the store function
+const store = async (req, res) => {
+    try {
+        let marksheet = new Marksheet(req.body);
+        await marksheet.save();
+        res.json({
+            message: 'Marksheet Added Successfully!'
+        });
+    } catch (error) {
+        console.error('Error adding marksheet:', error);
+        res.status(500).json({
+            message: 'An error occurred while adding the marksheet.',
+            error: error.message  // Add this line to send the error message
+        });
+    }
+};
+
+
+ 
