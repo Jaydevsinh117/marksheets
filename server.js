@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-
+const cors = require('cors');
 //const EmployeeRoute  = require('./routes/employee')
 const MarksheetRoute = require('./routes/marksheet'); // Add this line
 
@@ -34,6 +34,7 @@ db.once('open', () => {
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors())
 
 const PORT = process.env.PORT || 3007;
 
